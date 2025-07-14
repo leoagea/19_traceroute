@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:43:58 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 18:46:03 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/14 21:11:50 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 typedef struct s_data
 {
-	
+	char *target;          // Target IP or hostname
 } t_data;
 
 #endif

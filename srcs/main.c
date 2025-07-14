@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 16:34:03 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 19:26:34 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/14 21:21:52 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void init_signals(void)
 int main(int ac, char **av)
 {
 	(void)av; // Unused parameter
-	if (ac < 2)
+	if (ac < 2 || ac > 3)
 		return (usage(), EXIT_SUCCESS);
 	
 	if (getuid() != 0)
@@ -57,6 +57,8 @@ int main(int ac, char **av)
 		return (EXIT_FAILURE);
 	
 	init_signals();
+	parse_args(av);
 
+	free_data(g_data);
 	return (EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:44:28 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 19:26:07 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/14 21:17:03 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,13 @@
 
 #include "struct.h"
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <signal.h>
-#include <errno.h>
-#include <string.h>
+#include <unistd.h>				//write
+#include <stdlib.h>				//malloc, free
+#include <stdio.h>				//snprintf
+#include <signal.h>				//sigaction, SIGINT, SIGTERM	
+#include <errno.h>				//errno, strerror
+#include <string.h>				//strerror
+#include <limits.h>				//INT_MAX
 
 /*#############################################################################
 # Global Variables
@@ -44,6 +45,11 @@ extern t_data *g_data;
 
 #define _(fd, str) do { ssize_t unused = write(fd, str, ft_strlen(str)); (void) unused;} while (0)
 
+/*#############################################################################
+# Parse.c
+#############################################################################*/
+
+int parse_args(char **av);
 
 /*#############################################################################
 # Utils.c
@@ -51,13 +57,17 @@ extern t_data *g_data;
 
 void exit_error(const char *msg);
 void usage(void);
+void help(void);
 
 /*#############################################################################
 # Helper.c
 #############################################################################*/
 
+int		ft_strncmp(const char *s1, const char *s2, size_t n);
 void	*ft_calloc(size_t count, size_t size);
+void	*ft_memcpy(void *dst, const void *src, size_t n);
 size_t	ft_strlen(const char *msg);
+char	*ft_strdup(const char *s1);
 
 /*#############################################################################
 # Free.c
