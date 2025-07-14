@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:51:48 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 21:43:10 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/14 21:59:11 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ int parse_args(char **av)
 // 	return (result == 1);
 // }
 
-int resolve_dns(const char *target)
+void resolve_dns(const char *target)
 {
 	size_t status = 0;
 	struct addrinfo hints, *res;
 
-	memset(&hints, 0, sizeof(struct addrinfo));
+	ft_memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_INET; // IPv4
 	hints.ai_socktype = SOCK_RAW; // Raw socket for traceroute
 	hints.ai_flags = AI_CANONNAME; // Get canonical name
@@ -59,10 +59,10 @@ int resolve_dns(const char *target)
 			struct sockaddr_in *addr_in = (struct sockaddr_in *)p->ai_addr;
             g_data->target_ip = addr_in->sin_addr.s_addr;
 			freeaddrinfo(res);
-			return true;
+			return ;
 		}
 	}
 	
 	freeaddrinfo(res);
-	return (false);
+	exit_error("ft_traceroute: Invalid target IP or hostname.\n");
 }

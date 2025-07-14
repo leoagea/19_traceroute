@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:44:28 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 21:45:50 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/14 21:59:04 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,17 +52,23 @@ extern t_data *g_data;
 # Parse.c
 #############################################################################*/
 
-int parse_args(char **av);
-int resolve_dns(const char *target);
+int		parse_args(char **av);
+void	resolve_dns(const char *target);
+
+/*#############################################################################
+# Socket.c
+#############################################################################*/
+
+void	init_sockets(void);
 
 /*#############################################################################
 # Utils.c
 #############################################################################*/
 
-void exit_error(const char *msg);
-void usage(void);
-void help(void);
-void print_gai_error(const char *target, int status);
+void	exit_error(const char *msg);
+void	usage(void);
+void	help(void);
+void	print_gai_error(const char *target, int status);
 
 /*#############################################################################
 # Helper.c
@@ -71,6 +77,7 @@ void print_gai_error(const char *target, int status);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 void	*ft_calloc(size_t count, size_t size);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
+void	*ft_memset(void *str, int c, size_t n);
 size_t	ft_strlen(const char *msg);
 char	*ft_strdup(const char *s1);
 
