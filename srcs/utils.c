@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:59:34 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 21:17:29 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/14 21:35:14 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,4 +42,12 @@ void help(void)
 	len += snprintf((char *)msg + len, BUF_SIZE - len, "\t  -v, --version    Show version information\n");  
 
 	_(STDERR_FILENO, msg);
+}
+
+void print_gai_error(const char *target, int status)
+{
+	char buf[BUF_SIZE] = {0};
+
+	snprintf(buf, BUF_SIZE, "ft_traceroute: getaddrinfo: %s: %s\n", target, gai_strerror(status));
+	_(STDERR_FILENO, buf);
 }
