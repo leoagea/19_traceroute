@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:51:53 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 21:58:55 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/16 11:13:44 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,15 +71,6 @@ void	*ft_memset(void *str, int c, size_t n)
 	return (str);
 }
 
-size_t	ft_strlen(const char *msg)
-{
-	size_t len = 0;
-	while (*msg++)
-		len++;
-
-	return (len);
-}
-
 char	*ft_strdup(const char *s1)
 {
 	size_t	len = ft_strlen(s1);
@@ -91,4 +82,27 @@ char	*ft_strdup(const char *s1)
 	cpy[len] = '\0';
 
 	return (cpy);
+}
+
+size_t	ft_strlen(const char *msg)
+{
+	size_t len = 0;
+	while (*msg++)
+		len++;
+
+	return (len);
+}
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	i = 0;
+
+	if (dstsize != 0){
+		while (i < dstsize - 1 && src[i]){
+			dst[i] = src[i];
+			i++;
+		}
+		dst[i] = '\0';
+	}
+	return (ft_strlen(src));
 }

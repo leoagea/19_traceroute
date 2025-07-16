@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:44:28 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/15 15:12:25 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/16 11:14:00 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@
 #include <stdbool.h>			//bool
 #include <arpa/inet.h>			//inet_pton, sockaddr_in
 #include <sys/time.h>			//gettimeofday
-// #include <netinet/ip_icmp.h>	//ICMP header
+#include <netinet/ip_icmp.h>	//ICMP header
+#include <netinet/ip.h>		//IP header
+#include <netinet/udp.h>		//UDP header
 
 /*#############################################################################
 # Global Variables
@@ -51,6 +53,7 @@ extern t_data *g_data;
 #define ICMP_DEST_UNREACH	3
 #define ICMP_PORT_UNREACH	3
 #define PAYLOAD_SIZE 32 // Size of payload in UDP probe packets
+#define PACKET_SIZE (sizeof(struct iphdr) + sizeof(struct udphdr) + PAYLOAD_SIZE)
 
 /*#############################################################################
 # Macros
@@ -96,8 +99,9 @@ int		ft_strncmp(const char *s1, const char *s2, size_t n);
 void	*ft_calloc(size_t count, size_t size);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 void	*ft_memset(void *str, int c, size_t n);
-size_t	ft_strlen(const char *msg);
 char	*ft_strdup(const char *s1);
+size_t	ft_strlen(const char *msg);
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 
 /*#############################################################################
 # Free.c

@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 11:45:58 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/15 15:13:25 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/16 12:22:58 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,22 +31,19 @@ static int receive_probe(t_probe_info *probe_info, char *hop_ip, double *rtt)
 	
 	if (select_result == 0) {
 		// Timeout - no response
-		strcpy(hop_ip, "*");
+		ft_strlcpy(hop_ip, "*", INET_ADDRSTRLEN);
 		*rtt = -1.0;
 		return 0;
 	}
 	
-	if (select_result < 0) {
-		// Error in select
+	if (select_result < 0) 
 		return -1;
-	}
 	
-	// Data available - receive immediately and timestamp
 	ssize_t recv_bytes = recvfrom(g_data->icmp_socket, buffer, sizeof(buffer), MSG_DONTWAIT,
 								  (struct sockaddr *)&from_addr, &from_len);
 	if (recv_bytes < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK){
-			strcpy(hop_ip, "*");
+			ft_strlcpy(hop_ip, "*", INET_ADDRSTRLEN);
 			*rtt = -1.0;
 			return 0;
 		}
@@ -55,39 +52,30 @@ static int receive_probe(t_probe_info *probe_info, char *hop_ip, double *rtt)
 	
 	gettimeofday(&recv_time, NULL);
 	
-	// Parse the received IP packet
 	struct iphdr *ip_hdr = (struct iphdr *)buffer;
 	int ip_header_len = ip_hdr->ihl * 4;
 	
-	// Get ICMP header (after IP header)
 	struct icmphdr *icmp_hdr = (struct icmphdr *)(buffer + ip_header_len);
 	
-	// Check ICMP type
-	if (icmp_hdr->type == ICMP_TIME_EXCEEDED || 
-		(icmp_hdr->type == ICMP_DEST_UNREACH && icmp_hdr->code == ICMP_PORT_UNREACH)) {
+	if (icmp_hdr->type == ICMP_TIME_EXCEEDED || (icmp_hdr->type == ICMP_DEST_UNREACH && icmp_hdr->code == ICMP_PORT_UNREACH)) {
 		
-		// Get the original IP header from ICMP payload
 		struct iphdr *orig_ip = (struct iphdr *)(buffer + ip_header_len + sizeof(struct icmphdr));
 		int orig_ip_len = orig_ip->ihl * 4;
 		
-		// Get the original UDP header
 		struct udphdr *orig_udp = (struct udphdr *)((char *)orig_ip + orig_ip_len);
 		
-		// Verify this is our probe by checking destination port and target IP
 		if (ntohs(orig_udp->dest) == probe_info->dest_port && 
 			orig_ip->daddr == g_data->target_ip) {
 			
-			// Extract source IP (the router that sent the ICMP)
-			inet_ntop(AF_INET, &from_addr.sin_addr, hop_ip, INET_ADDRSTRLEN);
+			struct in_addr addr;
+			addr.s_addr = from_addr.sin_addr.s_addr;
+			char *ip_str = inet_ntoa(addr);
+			ft_strlcpy(hop_ip, ip_str, INET_ADDRSTRLEN);
 			
-			// Calculate RTT in milliseconds
-			double send_ms = probe_info->send_time.tv_sec * 1000.0 + 
-						   probe_info->send_time.tv_usec / 1000.0;
-			double recv_ms = recv_time.tv_sec * 1000.0 + 
-						   recv_time.tv_usec / 1000.0;
+			double send_ms = probe_info->send_time.tv_sec * 1000.0 + probe_info->send_time.tv_usec / 1000.0;
+			double recv_ms = recv_time.tv_sec * 1000.0 + recv_time.tv_usec / 1000.0;
 			*rtt = recv_ms - send_ms;
 			
-			// Return different codes for different ICMP types
 			if (icmp_hdr->type == ICMP_TIME_EXCEEDED) {
 				return 1; // Intermediate router
 			} else {
@@ -97,7 +85,7 @@ static int receive_probe(t_probe_info *probe_info, char *hop_ip, double *rtt)
 	}
 	
 	// Not our probe or wrong ICMP type - ignore
-	strcpy(hop_ip, "*");
+	ft_strlcpy(hop_ip, "*", INET_ADDRSTRLEN);
 	*rtt = -1.0;
 	return 0;
 }
@@ -159,14 +147,17 @@ static int send_probe(int ttl, t_probe_info *probe_info)
 
 static void print_hop_info(int ttl, char ip_arr[PROBE_NUM][INET_ADDRSTRLEN], double rtt_values[PROBE_NUM])
 {
-	printf("%2d  ", ttl);
+	size_t len = 0;
+	char buf[BUF_SIZE] = {0};
+
+	len = snprintf(buf, BUF_SIZE , "%2d  ", ttl);
 	
 	// Check if all IPs are the same (and not "*")
 	bool all_same = true;
 	bool has_valid_ip = false;
 	
 	for (int i = 0; i < PROBE_NUM; i++) {
-		if (strcmp(ip_arr[i], "*") != 0) {
+		if (ft_strncmp(ip_arr[i], "*", INT_MAX) != 0) {
 			has_valid_ip = true;
 			break;
 		}
@@ -174,91 +165,88 @@ static void print_hop_info(int ttl, char ip_arr[PROBE_NUM][INET_ADDRSTRLEN], dou
 	
 	if (has_valid_ip) {
 		for (int i = 1; i < PROBE_NUM; i++) {
-			if (strcmp(ip_arr[0], ip_arr[i]) != 0) {
+			if (ft_strncmp(ip_arr[0], ip_arr[i], INT_MAX) != 0) {
 				all_same = false;
 				break;
 			}
 		}
-	} else {
+	} else
 		all_same = false; // All are "*"
-	}
 	
 	if (all_same && has_valid_ip) {
 		// All IPs are the same - print IP once, then all RTTs
-		char *host = get_hostname(ip_arr[0]);
-		printf("%s (%s) ", host ? host : ip_arr[0] ,ip_arr[0]);
+		len += snprintf(buf + len, BUF_SIZE - len, "%s (%s) ", get_hostname(ip_arr[0]) ? get_hostname(ip_arr[0]) : ip_arr[0] ,ip_arr[0]);
 		for (int i = 0; i < PROBE_NUM; i++) {
-			if (rtt_values[i] >= 0) {
-				printf("%.3f ms ", rtt_values[i]);
-			} else {
-				printf("* ");
-			}
+			if (rtt_values[i] >= 0)
+				len += snprintf(buf + len, BUF_SIZE - len, "%.3f ms ", rtt_values[i]);
+			else
+				len += snprintf(buf + len, BUF_SIZE - len, "* ");
 		}
 	} else {
 		// Different IPs or all timeouts - print each probe separately
 		for (int i = 0; i < PROBE_NUM; i++) {
-			if (strcmp(ip_arr[i], "*") == 0) {
-				printf("* ");
-			} else {
-				char *host = get_hostname(ip_arr[i]);
-				printf("%s (%s) %.3f ms ", host ? host : ip_arr[i], ip_arr[i], rtt_values[i]);
-			}
+			if (ft_strncmp(ip_arr[i], "*", INT_MAX) == 0)
+				len += snprintf(buf + len, BUF_SIZE - len, "* ");
+			else 
+				len += snprintf(buf + len, BUF_SIZE - len, "%s (%s) %.3f ms ", get_hostname(ip_arr[i]) ? get_hostname(ip_arr[i]) : ip_arr[i], ip_arr[i], rtt_values[i]);
 		}
 	}
 	
-	printf("\n");
+	snprintf(buf + len, BUF_SIZE - len, "\n");
+	_(STDOUT_FILENO, buf);
 }
 
 int run_loop(void)
 {
 	int ttl = 1;
+	char buf[BUF_SIZE] = {0};
 
+	struct in_addr addr;
+    addr.s_addr = g_data->target_ip;
+    char *ip_str = inet_ntoa(addr);
+	snprintf(buf, BUF_SIZE, "traceroute to %s (%s), %d hops max, %ld byte packets\n", g_data->target, ip_str, MAX_TTL, PACKET_SIZE);
+	_(STDOUT_FILENO, buf);
+	
 	while (ttl <= MAX_TTL) {
 		char ip_arr[PROBE_NUM][INET_ADDRSTRLEN];
 		double rtt_values[PROBE_NUM];
 		bool reached_destination = false;
 		
+		for (int i = 0; i < PROBE_NUM; i++){
+			ft_strlcpy(ip_arr[i], "*", INET_ADDRSTRLEN);
+			rtt_values[i] = -1.0;
+		}
+
 		// Send all probes for this TTL and collect results
 		for (int i = 0; i < PROBE_NUM; i++) {
 			t_probe_info probe_info;
 			char hop_ip[INET_ADDRSTRLEN];
 			double rtt;
 			
-			// Initialize defaults
-			strcpy(ip_arr[i], "*");
+			ft_strlcpy(hop_ip, "*", INET_ADDRSTRLEN);
 			rtt_values[i] = -1.0;
 			
-			// Send probe
-			if (send_probe(ttl, &probe_info) == -1) {
-				continue; // Keep defaults for failed send
-			}
+			if (send_probe(ttl, &probe_info) == -1)
+				continue; 
 			
-			// Receive response
 			int result = receive_probe(&probe_info, hop_ip, &rtt);
 			
 			if (result == -1) {
 				// Error - keep defaults
 				continue;
 			} else if (result > 0) {
-				// Got a valid response
-				strcpy(ip_arr[i], hop_ip);
+				ft_strlcpy(ip_arr[i], hop_ip, INET_ADDRSTRLEN);
 				rtt_values[i] = rtt;
 				
-				if (result == 2) {
+				if (result == 2)
 					reached_destination = true;
-				}
 			}
-			// If result == 0, it's a timeout - keep defaults
 		}
 		
-		// Print all results for this hop
 		print_hop_info(ttl, ip_arr, rtt_values);
 		
-		// Check if we reached destination
-		if (reached_destination) {
-			printf("\nReached destination!\n");
+		if (reached_destination)
 			return 0;
-		}
 		
 		ttl++;
 	}
