@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:44:28 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 21:59:04 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/15 15:12:25 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 #include <netdb.h>				//getaddrinfo
 #include <stdbool.h>			//bool
 #include <arpa/inet.h>			//inet_pton, sockaddr_in
+#include <sys/time.h>			//gettimeofday
+// #include <netinet/ip_icmp.h>	//ICMP header
 
 /*#############################################################################
 # Global Variables
@@ -41,6 +43,14 @@ extern t_data *g_data;
 #############################################################################*/
 
 #define BUF_SIZE 1024
+#define MAX_TTL 30
+#define PROBE_NUM 3
+#define PROBE_TIMEOUT 1 // seconds
+#define PROBE_PORT 33434 // Starting port for probes
+#define ICMP_TIME_EXCEEDED 11
+#define ICMP_DEST_UNREACH	3
+#define ICMP_PORT_UNREACH	3
+#define PAYLOAD_SIZE 32 // Size of payload in UDP probe packets
 
 /*#############################################################################
 # Macros
@@ -62,6 +72,12 @@ void	resolve_dns(const char *target);
 void	init_sockets(void);
 
 /*#############################################################################
+# Loop.c
+#############################################################################*/
+
+int		run_loop(void);
+
+/*#############################################################################
 # Utils.c
 #############################################################################*/
 
@@ -69,6 +85,8 @@ void	exit_error(const char *msg);
 void	usage(void);
 void	help(void);
 void	print_gai_error(const char *target, int status);
+char	*get_hostname(const char *ip_str);
+uint16_t calculate_checksum(void *data, int len);
 
 /*#############################################################################
 # Helper.c

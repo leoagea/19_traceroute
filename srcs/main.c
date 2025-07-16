@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 16:34:03 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 21:57:22 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/15 12:04:05 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,11 @@ int main(int ac, char **av)
 	parse_args(av);
 	resolve_dns(g_data->target);
 	init_sockets();
+	if (run_loop() == -1){
+		char buf[BUF_SIZE] = {0};
+		snprintf(buf, BUF_SIZE, "ft_traceroute: %s\n", strerror(errno));
+		exit_error(buf);
+	}
 
 	free_data(g_data);
 	return (EXIT_SUCCESS);

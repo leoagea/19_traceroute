@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 21:49:12 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 21:59:22 by lagea            ###   ########.fr       */
+/*   Updated: 2025/07/15 11:43:01 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,7 @@ void init_sockets(void)
 	}
 
 	// Set receive timeout for ICMP socket
-	struct timeval timeout;
-	timeout.tv_sec = 5;
-	timeout.tv_usec = 0;
+	struct timeval timeout = { .tv_sec = 5, .tv_usec = 0 };
 	if (setsockopt(g_data->icmp_socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
 		close(g_data->raw_socket);
 		close(g_data->icmp_socket);
