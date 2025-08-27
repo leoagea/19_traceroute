@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:44:28 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/16 11:14:00 by lagea            ###   ########.fr       */
+/*   Updated: 2025/08/27 16:39:42 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 #include <unistd.h>				//write
 #include <stdlib.h>				//malloc, free
 #include <stdio.h>				//snprintf
-#include <signal.h>				//sigaction, SIGINT, SIGTERM	
 #include <errno.h>				//errno, strerror
 #include <string.h>				//strerror
 #include <limits.h>				//INT_MAX
@@ -31,7 +30,7 @@
 #include <arpa/inet.h>			//inet_pton, sockaddr_in
 #include <sys/time.h>			//gettimeofday
 #include <netinet/ip_icmp.h>	//ICMP header
-#include <netinet/ip.h>		//IP header
+#include <netinet/ip.h>			//IP header
 #include <netinet/udp.h>		//UDP header
 
 /*#############################################################################
@@ -84,6 +83,7 @@ int		run_loop(void);
 # Utils.c
 #############################################################################*/
 
+void	free_data(t_data *data);
 void	exit_error(const char *msg);
 void	usage(void);
 void	help(void);
@@ -102,11 +102,5 @@ void	*ft_memset(void *str, int c, size_t n);
 char	*ft_strdup(const char *s1);
 size_t	ft_strlen(const char *msg);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
-
-/*#############################################################################
-# Free.c
-#############################################################################*/
-
-void	free_data(t_data *data);
 
 #endif

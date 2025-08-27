@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 11:45:58 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/16 12:22:58 by lagea            ###   ########.fr       */
+/*   Updated: 2025/08/27 16:45:14 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,6 @@ static void print_hop_info(int ttl, char ip_arr[PROBE_NUM][INET_ADDRSTRLEN], dou
 
 	len = snprintf(buf, BUF_SIZE , "%2d  ", ttl);
 	
-	// Check if all IPs are the same (and not "*")
 	bool all_same = true;
 	bool has_valid_ip = false;
 	
@@ -178,7 +177,7 @@ static void print_hop_info(int ttl, char ip_arr[PROBE_NUM][INET_ADDRSTRLEN], dou
 		len += snprintf(buf + len, BUF_SIZE - len, "%s (%s) ", get_hostname(ip_arr[0]) ? get_hostname(ip_arr[0]) : ip_arr[0] ,ip_arr[0]);
 		for (int i = 0; i < PROBE_NUM; i++) {
 			if (rtt_values[i] >= 0)
-				len += snprintf(buf + len, BUF_SIZE - len, "%.3f ms ", rtt_values[i]);
+				len += snprintf(buf + len, BUF_SIZE - len, " %.3f ms ", rtt_values[i]);
 			else
 				len += snprintf(buf + len, BUF_SIZE - len, "* ");
 		}
@@ -188,7 +187,7 @@ static void print_hop_info(int ttl, char ip_arr[PROBE_NUM][INET_ADDRSTRLEN], dou
 			if (ft_strncmp(ip_arr[i], "*", INT_MAX) == 0)
 				len += snprintf(buf + len, BUF_SIZE - len, "* ");
 			else 
-				len += snprintf(buf + len, BUF_SIZE - len, "%s (%s) %.3f ms ", get_hostname(ip_arr[i]) ? get_hostname(ip_arr[i]) : ip_arr[i], ip_arr[i], rtt_values[i]);
+				len += snprintf(buf + len, BUF_SIZE - len, "%s (%s)  %.3f ms ", get_hostname(ip_arr[i]) ? get_hostname(ip_arr[i]) : ip_arr[i], ip_arr[i], rtt_values[i]);
 		}
 	}
 	

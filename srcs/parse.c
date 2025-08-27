@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:51:48 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/14 21:59:11 by lagea            ###   ########.fr       */
+/*   Updated: 2025/08/27 16:32:01 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,13 @@ int parse_args(char **av)
 {
 	if (ft_strncmp(av[1], "--help", INT_MAX) == 0 || ft_strncmp(av[1], "-h", INT_MAX) == 0){
 		help();
-		return (EXIT_SUCCESS);
+		free_data(g_data);
+		exit(EXIT_SUCCESS);
 	}
 	else if (ft_strncmp(av[1], "--version", INT_MAX) == 0 || ft_strncmp(av[1], "-v", INT_MAX) == 0){
 		_(STDOUT_FILENO, "ft_traceroute version 1.0.0\n");
-		return (EXIT_SUCCESS);
+		free_data(g_data);
+		exit(EXIT_SUCCESS);
 	}
 
 	g_data->target = ft_strdup(av[1]);
@@ -29,13 +31,6 @@ int parse_args(char **av)
 
 	return (EXIT_SUCCESS);
 }
-
-// static bool is_valid_ip4(const char *ip)
-// {
-// 	struct sockaddr_in sa;
-// 	int result = inet_pton(AF_INET, ip, &(sa.sin_addr));
-// 	return (result == 1);
-// }
 
 void resolve_dns(const char *target)
 {

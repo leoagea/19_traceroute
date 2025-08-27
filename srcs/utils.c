@@ -6,11 +6,24 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:59:34 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/15 15:12:15 by lagea            ###   ########.fr       */
+/*   Updated: 2025/08/27 17:04:40 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ft_traceroute.h"
+
+void free_data(t_data *data)
+{
+	if (data){
+		if (data->target)
+			free(data->target);
+		if (data->raw_socket > 0)
+			close(data->raw_socket);
+		if (data->icmp_socket > 0)
+			close(data->icmp_socket);
+		free(data);
+	}
+}
 
 void exit_error(const char *msg)
 {
@@ -36,7 +49,9 @@ void help(void)
 	size_t len = 0;
 	const char msg[BUF_SIZE] = {0};
 
-	len = snprintf((char *)msg, BUF_SIZE, "%s",  "Usage: ft_traceroute <options> <destination>\n");
+	len = snprintf((char *)msg, BUF_SIZE, "%s",  "Usage: ft_traceroute <options> or <destination>\n");
+	len += snprintf((char *)msg + len, BUF_SIZE - len, "Destinations:\n");
+	len += snprintf((char *)msg + len, BUF_SIZE - len, "\t  <hostname> or <IPv4 address>\n");
 	len += snprintf((char *)msg + len, BUF_SIZE - len, "Options:\n");
 	len += snprintf((char *)msg + len, BUF_SIZE - len, "\t  -h, --help       Show this help message\n");
 	len += snprintf((char *)msg + len, BUF_SIZE - len, "\t  -v, --version    Show version information\n");  
