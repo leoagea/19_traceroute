@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 20:51:48 by lagea             #+#    #+#             */
-/*   Updated: 2025/08/27 16:32:01 by lagea            ###   ########.fr       */
+/*   Updated: 2025/08/28 12:56:33 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ void resolve_dns(const char *target)
 	struct addrinfo hints, *res;
 
 	ft_memset(&hints, 0, sizeof(struct addrinfo));
-	hints.ai_family = AF_INET; // IPv4
-	hints.ai_socktype = SOCK_RAW; // Raw socket for traceroute
-	hints.ai_flags = AI_CANONNAME; // Get canonical name
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_RAW;
+	hints.ai_flags = AI_CANONNAME;
 	
 	status = getaddrinfo(target, NULL, &hints, &res);
 	if (status != 0){

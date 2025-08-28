@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 11:45:58 by lagea             #+#    #+#             */
-/*   Updated: 2025/08/27 16:45:14 by lagea            ###   ########.fr       */
+/*   Updated: 2025/08/28 12:57:26 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ static int receive_probe(t_probe_info *probe_info, char *hop_ip, double *rtt)
 	int select_result = select(g_data->icmp_socket + 1, &read_fds, NULL, NULL, &timeout);
 	
 	if (select_result == 0) {
-		// Timeout - no response
 		ft_strlcpy(hop_ip, "*", INET_ADDRSTRLEN);
 		*rtt = -1.0;
 		return 0;
@@ -39,8 +38,7 @@ static int receive_probe(t_probe_info *probe_info, char *hop_ip, double *rtt)
 	if (select_result < 0) 
 		return -1;
 	
-	ssize_t recv_bytes = recvfrom(g_data->icmp_socket, buffer, sizeof(buffer), MSG_DONTWAIT,
-								  (struct sockaddr *)&from_addr, &from_len);
+	ssize_t recv_bytes = recvfrom(g_data->icmp_socket, buffer, sizeof(buffer), MSG_DONTWAIT, (struct sockaddr *)&from_addr, &from_len);
 	if (recv_bytes < 0) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK){
 			ft_strlcpy(hop_ip, "*", INET_ADDRSTRLEN);
