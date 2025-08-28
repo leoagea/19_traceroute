@@ -6,7 +6,7 @@
 /*   By: lagea < lagea@student.s19.be >             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/14 18:43:58 by lagea             #+#    #+#             */
-/*   Updated: 2025/07/16 11:11:53 by lagea            ###   ########.fr       */
+/*   Updated: 2025/08/28 13:01:32 by lagea            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,11 @@
 
 typedef int sockfd;
 
-typedef struct {
-	struct timeval send_time;
-	uint16_t dest_port;
-	int ttl;
+typedef struct 
+{
+	int				ttl;
+	uint16_t		dest_port;
+	struct timeval	send_time;
 } t_probe_info;
 
 typedef struct s_data
